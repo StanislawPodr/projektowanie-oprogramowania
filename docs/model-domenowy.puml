@@ -1,0 +1,108 @@
+@startuml modelDomenowy
+skinparam linetype polyline
+
+class Uzytkownik {
+    login : String[1]
+    email : String[1]
+    hashHasla : String[1]
+}
+
+class Pakiet {
+    liczbaDni: Integer[1]
+    nazwa: String[1]
+    kwota: Integer[1]
+}
+
+class Pracownik
+
+class Admin
+
+Admin --|> Pracownik
+
+class Klient {
+    imie : String[1]
+    nazwisko : String[1]
+    pesel : String[1]
+    liczbaDniPakietow: Integer[1]
+}
+
+Pracownik --|> Uzytkownik
+Klient --|> Uzytkownik
+
+class Adres {
+    miejscowosc: String[1]
+    ulica: String[0..1]
+    numerDomu: String[1]
+    numerMieszkania: String[0..1]
+    kodPocztowy: String[1]
+}
+
+class InformacjeOGrze {
+    nazwa: String[1]
+    opis: String[1]
+    autor: String[0..1]
+    wydawnictwo: String[0..1]
+    maksLiczbaGraczy: Integer[0..1]
+    minimalnyWiek: Integer[0..1]
+}
+
+class Wypozyczenie {
+    dzienPozyczenia: Dzien[1]
+    dzienKoncaPakietu: Dzien[1]
+    dzienZwrotu: Dzien[0..1]
+}
+
+
+class Gra {
+    stan: Stan[1]
+    numerInwentaryzacyjny: String[1]
+    cena: Integer[1]
+    polozenie: PolozenieGry[0..1]
+}
+
+class Kategoria {
+    nazwa: String[1]
+    opis: String[1]
+}
+
+class Dostawa {
+    dostawca: Dostawca[1]
+    dataZamowienia: Dzien[1]
+    dataDostarczenia: Dzien[0..1]
+}
+
+class Dzien <<DataClass>> {
+    dzien: Integer[1]
+    miesiac: Integer[1]
+    rok: Integer[1]
+}
+
+class PolozenieGry <<DataClass>> {
+    pomieszczenie: String
+    regal: Integer
+}
+
+enum Dostawca {
+    INPOST
+    DPD
+    DHL
+    PP
+}
+
+enum Stan {
+    DOSTEPNA
+    NIEDOSTEPNA
+    WYPOZYCZONA
+    STRACONA
+}
+
+Klient *-- "0..5" Adres : posiada >
+Kategoria "1..*" -- "0..*" InformacjeOGrze
+Pracownik "0..1" -- "0..*" Wypozyczenie : wydaje >
+Gra "0..*" --* InformacjeOGrze
+Dostawa "0..1" -- Wypozyczenie
+Dostawa "0..*" --> Adres
+Wypozyczenie "0..*" -- Klient : pozycza <
+Gra "1..*" -- "0..*" Wypozyczenie
+
+@enduml
